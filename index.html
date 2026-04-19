@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Structura — Agency Operations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:       #060d18;
+  --bg2:      #0a1525;
+  --bg3:      #0d1e35;
+  --bg4:      #091220;
+  --accent:   #2563eb;
+  --accent2:  #60a5fa;
+  --accent3:  #93c5fd;
+  --text:     #eef2ff;
+  --muted:    #5e7fa8;
+  --muted2:   #8aabce;
+  --border:   rgba(96,165,250,0.1);
+  --border2:  rgba(96,165,250,0.2);
+  --mono:     'IBM Plex Mono', monospace;
+  --sans:     'Space Grotesk', sans-serif;
+  --display:  'Syne', sans-serif;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.6; overflow-x: hidden; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+nav {
+  position: sticky; top: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 64px; height: 68px;
+  background: rgba(6,13,24,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: var(--display); font-size: 22px; font-weight: 800;
+  color: var(--text); letter-spacing: -0.01em; cursor: pointer;
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-logo-mark {
+  width: 28px; height: 28px; background: var(--accent);
+  border-radius: 5px; display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; color: white;
+}
+.nav-links { display: flex; gap: 8px; }
+.nav-link {
+  font-size: 14px; color: var(--muted); padding: 8px 14px;
+  border-radius: 6px; cursor: pointer; transition: color 0.2s, background 0.2s;
+  border: none; background: none; font-family: var(--sans);
+}
+.nav-link:hover, .nav-link.active { color: var(--text); background: rgba(255,255,255,0.05); }
+.nav-cta {
+  background: var(--accent); color: white; padding: 9px 20px;
+  border-radius: 7px; font-size: 14px; font-weight: 600;
+  cursor: pointer; border: none; font-family: var(--sans);
+  transition: background 0.2s, transform 0.1s;
+}
+.nav-cta:hover { background: #1d4ed8; transform: translateY(-1px); }
+.page { display: none; }
+.page.active { display: block; }
+.section { padding: 100px 64px; }
+.section-sm { padding: 64px 64px; }
+.eyebrow {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  color: var(--accent2); letter-spacing: 0.2em; text-transform: uppercase;
+  margin-bottom: 20px; display: block;
+}
+.section-title {
+  font-family: var(--display); font-size: clamp(32px, 4vw, 48px);
+  font-weight: 800; color: var(--text); letter-spacing: -0.03em;
+  margin-bottom: 16px; line-height: 1.1;
+}
+.section-sub {
+  font-size: 17px; color: var(--muted2); line-height: 1.7;
+  max-width: 560px; margin-bottom: 48px;
+}
+.divider { height: 1px; background: var(--border); margin: 0 64px; }
+.tag {
+  display: inline-block; font-family: var(--mono); font-size: 10px;
+  font-weight: 500; color: var(--accent2); letter-spacing: 0.15em;
+  text-transform: uppercase; border: 1px solid var(--border2);
+  padding: 4px 10px; border-radius: 20px; margin-bottom: 12px;
+}
+.pill-green {
+  display: inline-block; background: rgba(22,163,74,0.15);
+  color: #4ade80; font-size: 11px; font-weight: 500;
+  padding: 3px 10px; border-radius: 20px; font-family: var(--mono);
+}
+.pill-amber {
+  display: inline-block; background: rgba(217,119,6,0.15);
+  color: #fbbf24; font-size: 11px; font-weight: 500;
+  padding: 3px 10px; border-radius: 20px; font-family: var(--mono);
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 24px; border-radius: 8px; font-size: 15px;
+  font-weight: 600; cursor: pointer; border: none;
+  font-family: var(--sans); transition: all 0.2s; text-decoration: none;
+}
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); }
+.btn-ghost { background: transparent; color: var(--accent2); border: 1px solid var(--border2); }
+.btn-ghost:hover { background: rgba(96,165,250,0.08); border-color: var(--accent2); }
+.btn-sm { padding: 9px 18px; font-size: 14px; }
+.hero {
+  min-height: calc(100vh - 68px);
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 80px 64px; position: relative; overflow: hidden;
+}
+.hero-glow {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 75% 40%, rgba(37,99,235,0.14) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 50% at 15% 75%, rgba(96,165,250,0.07) 0%, transparent 60%);
+}
+.hero-grid {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.03;
+  background-image: linear-gradient(rgba(96,165,250,0.8) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(96,165,250,0.8) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-content { position: relative; z-index: 1; max-width: 800px; }
+.hero-title {
+  font-family: var(--display); font-size: clamp(56px, 8vw, 108px);
+  font-weight: 800; line-height: 0.92; letter-spacing: -0.04em;
+  color: var(--text); margin-bottom: 32px;
+}
+.hero-title .hl { color: var(--accent2); }
+.hero-title .hl2 {
+  -webkit-text-stroke: 1px var(--accent2); color: transparent;
+}
+.hero-sub {
+  font-size: 18px; color: var(--muted2); line-height: 1.7;
+  max-width: 520px; margin-bottom: 44px;
+}
+.hero-actions { display: flex; align-items: center; gap: 16px; margin-bottom: 72px; }
+.hero-social-proof { display: flex; align-items: center; gap: 24px; }
+.hero-proof-item {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--muted);
+}
+.hero-proof-dot { width: 6px; height: 6px; background: var(--accent2); border-radius: 50%; }
+.stats-strip {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.stat-item {
+  padding: 36px 40px;
+  border-right: 1px solid var(--border);
+}
+.stat-item:last-child { border-right: none; }
+.stat-num {
+  font-family: var(--display); font-size: 44px; font-weight: 800;
+  color: var(--text); letter-spacing: -0.03em; line-height: 1;
+  margin-bottom: 6px;
+}
+.stat-num span { color: var(--accent2); }
+.stat-label { font-size: 13px; color: var(--muted); }
+.problem { padding: 100px 64px; background: var(--bg2); }
+.problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.problem-list { display: flex; flex-direction: column; gap: 0; margin-top: 32px; }
+.problem-item {
+  display: flex; align-items: flex-start; gap: 20px;
+  padding: 24px 0; border-bottom: 1px solid var(--border);
+}
+.problem-item:last-child { border-bottom: none; }
+.problem-num {
+  font-family: var(--mono); font-size: 12px; color: var(--accent2);
+  font-weight: 500; min-width: 28px; margin-top: 2px;
+}
+.problem-text { font-size: 16px; color: var(--muted2); line-height: 1.6; }
+.problem-text strong { color: var(--text); font-weight: 600; }
+.problem-visual {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 16px; padding: 40px; position: relative; overflow: hidden;
+}
+.problem-visual::before {
+  content: '';
+  position: absolute; top: -40px; right: -40px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%);
+}
+.framework-title {
+  font-family: var(--mono); font-size: 11px; color: var(--accent2);
+  letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 28px;
+}
+.pillar {
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 16px; border-radius: 8px; margin-bottom: 8px;
+  border: 1px solid var(--border); background: rgba(255,255,255,0.02);
+  transition: border-color 0.2s;
+}
+.pillar:hover { border-color: var(--border2); }
+.pillar-icon { width: 32px; height: 32px; border-radius: 6px; background: rgba(37,99,235,0.2); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.pillar-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.pillar-desc { font-size: 12px; color: var(--muted); margin-top: 1px; }
+.products-home { padding: 100px 64px; }
+.products-grid-home {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+  background: var(--border); border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden; margin-top: 48px;
+}
+.product-card-home {
+  background: var(--bg2); padding: 36px 32px;
+  transition: background 0.2s; position: relative; overflow: hidden;
+  cursor: pointer;
+}
+.product-card-home::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: var(--accent); transform: scaleX(0); transition: transform 0.3s;
+}
+.product-card-home:hover { background: var(--bg3); }
+.product-card-home:hover::after { transform: scaleX(1); }
+.product-sku { font-family: var(--mono); font-size: 11px; color: var(--accent2); letter-spacing: 0.15em; margin-bottom: 16px; }
+.product-name-card { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 10px; line-height: 1.3; }
+.product-desc-card { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 24px; flex: 1; }
+.product-footer { display: flex; align-items: baseline; gap: 8px; }
+.product-price-card { font-size: 22px; font-weight: 700; color: var(--accent2); font-family: var(--display); }
+.product-list-card { font-size: 13px; color: var(--muted); text-decoration: line-through; }
+.product-format-card { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 8px; }
+.product-card-lg {
+  grid-column: span 2; background: var(--bg3);
+  padding: 40px; display: grid; grid-template-columns: 1fr auto;
+  gap: 32px; align-items: end; cursor: pointer; transition: background 0.2s;
+  position: relative; overflow: hidden;
+}
+.product-card-lg::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(ellipse 60% 80% at 80% 20%, rgba(37,99,235,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.product-card-lg:hover { background: #0f2240; }
+.product-card-lg .product-name-card { font-size: 24px; }
+.product-card-lg .product-desc-card { max-width: 480px; font-size: 15px; }
+.product-card-lg .product-price-card { font-size: 32px; }
+.cta-banner {
+  margin: 0 64px 100px;
+  background: linear-gradient(135deg, var(--bg3) 0%, #0a1e40 100%);
+  border: 1px solid var(--border2); border-radius: 20px;
+  padding: 64px 72px; display: flex; align-items: center;
+  justify-content: space-between; gap: 40px;
+  position: relative; overflow: hidden;
+}
+.cta-banner::before {
+  content: '';
+  position: absolute; right: -60px; top: -60px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(37,99,235,0.2) 0%, transparent 70%);
+}
+.cta-banner-title {
+  font-family: var(--display); font-size: 36px; font-weight: 800;
+  color: var(--text); letter-spacing: -0.03em; margin-bottom: 12px;
+}
+.cta-banner-sub { font-size: 16px; color: var(--muted2); max-width: 440px; line-height: 1.6; }
+.cta-banner-actions { display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; }
+.products-hero { padding: 80px 64px 64px; border-bottom: 1px solid var(--border); }
+.products-page-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+  background: var(--border); margin: 64px 64px 0;
+  border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+}
+.product-page-card {
+  background: var(--bg2); padding: 44px 40px;
+  display: flex; flex-direction: column; transition: background 0.2s;
+  position: relative; overflow: hidden;
+}
+.product-page-card:hover { background: var(--bg3); }
+.product-page-card.featured { background: var(--bg3); grid-column: span 2; }
+.product-page-card.featured::before {
+  content: '';
+  position: absolute; right: -80px; top: -80px;
+  width: 360px; height: 360px;
+  background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%);
+}
+.featured-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; position: relative; z-index: 1; }
+.product-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(37,99,235,0.2); color: var(--accent2);
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em;
+  text-transform: uppercase; padding: 5px 12px; border-radius: 20px;
+  border: 1px solid rgba(96,165,250,0.2); margin-bottom: 20px;
+}
+.product-name-page { font-family: var(--display); font-size: 26px; font-weight: 800; color: var(--text); letter-spacing: -0.02em; margin-bottom: 14px; line-height: 1.2; }
+.product-page-card.featured .product-name-page { font-size: 34px; }
+.product-desc-page { font-size: 15px; color: var(--muted2); line-height: 1.7; margin-bottom: 28px; flex: 1; }
+.product-includes { margin-bottom: 28px; }
+.product-includes-label { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 12px; }
+.product-include-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted2); margin-bottom: 8px; }
+.include-dot { width: 5px; height: 5px; background: var(--accent2); border-radius: 50%; flex-shrink: 0; }
+.product-price-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 20px; }
+.product-price-page { font-family: var(--display); font-size: 36px; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
+.product-list-page { font-size: 16px; color: var(--muted); text-decoration: line-through; }
+.product-savings { font-size: 13px; color: #4ade80; background: rgba(22,163,74,0.12); padding: 3px 10px; border-radius: 20px; }
+.about-hero {
+  padding: 100px 64px 80px;
+  border-bottom: 1px solid var(--border);
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+}
+.about-title {
+  font-family: var(--display); font-size: clamp(44px, 6vw, 80px);
+  font-weight: 800; color: var(--text); letter-spacing: -0.04em;
+  line-height: 0.95; margin-bottom: 28px;
+}
+.about-title span { color: var(--accent2); }
+.about-body { font-size: 17px; color: var(--muted2); line-height: 1.75; margin-bottom: 20px; }
+.about-quote {
+  padding: 32px 40px; background: var(--bg2);
+  border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0;
+  font-size: 22px; color: var(--text); line-height: 1.55; font-style: italic;
+  font-weight: 300;
+}
+.about-quote cite { display: block; font-size: 13px; color: var(--muted); font-style: normal; margin-top: 12px; font-family: var(--mono); }
+.pillars-section { padding: 80px 64px; background: var(--bg2); }
+.pillars-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-top: 48px; }
+.pillar-card { background: var(--bg2); padding: 32px 24px; text-align: center; transition: background 0.2s; }
+.pillar-card:hover { background: var(--bg3); }
+.pillar-icon-lg { width: 56px; height: 56px; border-radius: 14px; background: rgba(37,99,235,0.15); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 20px; }
+.pillar-card-name { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.pillar-card-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.mission-section { padding: 80px 64px; }
+.mission-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+.mission-card { background: var(--bg2); padding: 48px 40px; }
+.mission-card-title { font-family: var(--display); font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 20px; letter-spacing: -0.02em; }
+.mission-list { list-style: none; }
+.mission-list li { display: flex; gap: 12px; font-size: 15px; color: var(--muted2); line-height: 1.6; margin-bottom: 14px; }
+.mission-list li::before { content: '→'; color: var(--accent2); flex-shrink: 0; margin-top: 2px; }
+.blog-hero { padding: 80px 64px 64px; border-bottom: 1px solid var(--border); }
+.blog-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1px; background: var(--border); margin: 64px 64px 0; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+.blog-featured { background: var(--bg2); padding: 48px; cursor: pointer; transition: background 0.2s; }
+.blog-featured:hover { background: var(--bg3); }
+.blog-featured-tag { font-family: var(--mono); font-size: 10px; color: var(--accent2); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.blog-featured-title { font-family: var(--display); font-size: 30px; font-weight: 800; color: var(--text); letter-spacing: -0.02em; margin-bottom: 16px; line-height: 1.2; }
+.blog-featured-excerpt { font-size: 15px; color: var(--muted2); line-height: 1.7; margin-bottom: 28px; }
+.blog-featured-meta { font-size: 13px; color: var(--muted); font-family: var(--mono); }
+.blog-sidebar { display: flex; flex-direction: column; gap: 1px; background: var(--border); }
+.blog-card { background: var(--bg2); padding: 28px 28px; cursor: pointer; transition: background 0.2s; flex: 1; }
+.blog-card:hover { background: var(--bg3); }
+.blog-card-tag { font-family: var(--mono); font-size: 10px; color: var(--accent2); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 10px; }
+.blog-card-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.4; }
+.blog-card-excerpt { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
+.blog-card-meta { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+.blog-bottom-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); margin: 1px 64px 64px; border: 1px solid var(--border); border-top: none; overflow: hidden; border-radius: 0 0 16px 16px; }
+.blog-teaser { background: var(--bg2); padding: 32px 28px; cursor: pointer; transition: background 0.2s; }
+.blog-teaser:hover { background: var(--bg3); }
+.blog-teaser-label { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 10px; }
+.blog-teaser-title { font-size: 17px; font-weight: 600; color: var(--text); line-height: 1.35; }
+.blog-teaser-cta { font-size: 13px; color: var(--accent2); margin-top: 16px; display: flex; align-items: center; gap: 6px; }
+.membership-hero { padding: 100px 64px 80px; border-bottom: 1px solid var(--border); text-align: center; position: relative; overflow: hidden; }
+.membership-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(37,99,235,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.membership-title { font-family: var(--display); font-size: clamp(48px, 7vw, 88px); font-weight: 800; color: var(--text); letter-spacing: -0.04em; margin-bottom: 24px; line-height: 0.95; position: relative; }
+.membership-title span { color: var(--accent2); }
+.membership-sub { font-size: 18px; color: var(--muted2); max-width: 560px; margin: 0 auto 48px; line-height: 1.7; position: relative; }
+.plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 80px 64px; }
+.plan-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 40px 36px; position: relative; transition: border-color 0.2s, transform 0.2s; }
+.plan-card:hover { transform: translateY(-4px); }
+.plan-card.featured { border-color: var(--accent); background: var(--bg3); }
+.plan-featured-badge {
+  position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+  background: var(--accent); color: white; font-family: var(--mono);
+  font-size: 10px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 5px 16px; border-radius: 20px; white-space: nowrap;
+}
+.plan-name { font-family: var(--mono); font-size: 11px; color: var(--accent2); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+.plan-price { font-family: var(--display); font-size: 52px; font-weight: 800; color: var(--text); letter-spacing: -0.03em; line-height: 1; margin-bottom: 6px; }
+.plan-price span { font-size: 20px; color: var(--muted); font-weight: 400; font-family: var(--sans); }
+.plan-desc { font-size: 14px; color: var(--muted2); line-height: 1.6; margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+.plan-features { list-style: none; margin-bottom: 36px; }
+.plan-feature { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--muted2); margin-bottom: 12px; line-height: 1.5; }
+.plan-feature::before { content: '✓'; color: var(--accent2); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+.plan-feature.na { color: var(--muted); opacity: 0.5; }
+.plan-feature.na::before { content: '—'; color: var(--muted); }
+.membership-perks { padding: 0 64px 80px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.perk-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 28px 24px; }
+.perk-icon { font-size: 28px; margin-bottom: 16px; }
+.perk-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.perk-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+footer {
+  background: var(--bg4); border-top: 1px solid var(--border);
+  padding: 64px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px;
+}
+.footer-brand { }
+.footer-logo { font-family: var(--display); font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 14px; }
+.footer-tagline { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 260px; margin-bottom: 24px; }
+.footer-domain { font-family: var(--mono); font-size: 12px; color: var(--accent2); }
+.footer-col-title { font-size: 12px; font-weight: 600; color: var(--text); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 16px; }
+.footer-link { display: block; font-size: 14px; color: var(--muted); margin-bottom: 10px; cursor: pointer; transition: color 0.2s; }
+.footer-link:hover { color: var(--text); }
+.footer-bottom { padding: 24px 64px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.footer-copy { font-size: 13px; color: var(--muted); font-family: var(--mono); }
+.footer-legal { display: flex; gap: 24px; }
+.footer-legal-link { font-size: 12px; color: var(--muted); cursor: pointer; }
+@media (max-width: 900px) {
+  nav { padding: 0 24px; }
+  .nav-links { display: none; }
+  .hero, .section, .section-sm, .problem, .products-home, .cta-banner { padding-left: 24px; padding-right: 24px; }
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">
+    <div class="nav-logo-mark">S</div>
+    STRUCTURA
+  </div>
+  <div class="nav-links">
+    <button class="nav-link" onclick="showPage('home')">Home</button>
+    <button class="nav-link" onclick="showPage('products')">Products</button>
+    <button class="nav-link" onclick="showPage('about')">About</button>
+    <button class="nav-link" onclick="showPage('blog')">Blog</button>
+    <button class="nav-link" onclick="showPage('membership')">Membership</button>
+  </div>
+  <button class="nav-cta" onclick="showPage('products')">Get Started</button>
+</nav>
+<div class="page active" id="page-home">
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <span class="eyebrow">Agency Operations · Systems That Scale</span>
+      <h1 class="hero-title">
+        Build the<br>
+        <span class="hl">structure</span><br>
+        to scale<br>
+        <span class="hl2">beyond you.</span>
+      </h1>
+      <p class="hero-sub">Structura gives agency founders the systems, templates, and frameworks to stop being the bottleneck — and start building something that runs without them.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="showPage('products')">Explore Products →</button>
+        <button class="btn btn-ghost" onclick="showPage('about')">See how it works</button>
+      </div>
+      <div class="hero-social-proof">
+        <div class="hero-proof-item"><div class="hero-proof-dot"></div>5 operational frameworks</div>
+        <div class="hero-proof-item"><div class="hero-proof-dot"></div>Built for agency founders</div>
+        <div class="hero-proof-item"><div class="hero-proof-dot"></div>From $49.99</div>
+      </div>
+    </div>
+  </section>
+  <div class="stats-strip">
+    <div class="stat-item">
+      <div class="stat-num">5<span>×</span></div>
+      <div class="stat-label">Core operational pillars</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num"><span>$</span>49</div>
+      <div class="stat-label">Entry point to the system</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100<span>%</span></div>
+      <div class="stat-label">Organic — no fluff, no filler</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">1<span>×</span></div>
+      <div class="stat-label">Framework. Infinite scale.</div>
+    </div>
+  </div>
+  <section class="problem">
+    <div class="problem-grid">
+      <div>
+        <span class="eyebrow">The Problem</span>
+        <h2 class="section-title">You built the business.<br>Now it runs you.</h2>
+        <p class="section-sub">Every high-growth agency hits the same ceiling. The founder becomes the system — and the system breaks.</p>
+        <div class="problem-list">
+          <div class="problem-item">
+            <div class="problem-num">01</div>
+            <div class="problem-text"><strong>Every decision routes through you.</strong> Nothing moves without your input. Growth means more on your plate, not less.</div>
+          </div>
+          <div class="problem-item">
+            <div class="problem-num">02</div>
+            <div class="problem-text"><strong>Your team can't operate independently.</strong> No documented processes. No clear ownership. No way to scale delivery.</div>
+          </div>
+          <div class="problem-item">
+            <div class="problem-num">03</div>
+            <div class="problem-text"><strong>You're flying blind on performance.</strong> Gut feel drives decisions because the data isn't structured to give you signal.</div>
+          </div>
+          <div class="problem-item">
+            <div class="problem-num">04</div>
+            <div class="problem-text"><strong>Growth creates chaos, not momentum.</strong> More clients means more complexity — without systems, scale breaks the business.</div>
+          </div>
+        </div>
+      </div>
+      <div class="problem-visual">
+        <div class="framework-title">The Structura Framework</div>
+        <div class="pillar">
+          <div class="pillar-icon">💰</div>
+          <div><div class="pillar-name">Revenue</div><div class="pillar-desc">Predictable pipeline & pricing</div></div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">⚙️</div>
+          <div><div class="pillar-name">Delivery</div><div class="pillar-desc">Scalable, documented operations</div></div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">📊</div>
+          <div><div class="pillar-name">Performance</div><div class="pillar-desc">Clear metrics & accountability</div></div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">🏛️</div>
+          <div><div class="pillar-name">Ownership</div><div class="pillar-desc">Defined roles & decision rights</div></div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">💬</div>
+          <div><div class="pillar-name">Communication</div><div class="pillar-desc">Aligned teams, fewer fires</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="products-home">
+    <span class="eyebrow">Product Suite</span>
+    <h2 class="section-title">Everything you need to systematise your agency</h2>
+    <div class="products-grid-home">
+      <div class="product-card-home" onclick="showPage('products')">
+        <div class="product-sku">OPS · 01</div>
+        <div class="product-name-card">Agency Operational Audit</div>
+        <div class="product-desc-card">A comprehensive self-assessment across all five pillars — with scoring, gap analysis, and a prioritised action plan.</div>
+        <div class="product-footer"><span class="product-price-card">$49.99</span><span class="product-list-card">$75</span></div>
+        <div class="product-format-card">PDF · Assessment</div>
+      </div>
+      <div class="product-card-home" onclick="showPage('products')">
+        <div class="product-sku">OPS · 02</div>
+        <div class="product-name-card">Agency Systems Playbooks</div>
+        <div class="product-desc-card">Frameworks and ready-to-use templates for Revenue, Delivery, Performance, Ownership, and Communication.</div>
+        <div class="product-footer"><span class="product-price-card">$199.99</span><span class="product-list-card">$250</span></div>
+        <div class="product-format-card">PDF + Templates</div>
+      </div>
+      <div class="product-card-home" onclick="showPage('products')">
+        <div class="product-sku">OPS · 03</div>
+        <div class="product-name-card">Agency OS Templates & Systems Kit</div>
+        <div class="product-desc-card">The complete template bundle — every system, process, and framework pre-built and ready to implement from day one.</div>
+        <div class="product-footer"><span class="product-price-card">$249.99</span><span class="product-list-card">$300</span></div>
+        <div class="product-format-card">Template Bundle</div>
+      </div>
+      <div class="product-card-lg" onclick="showPage('products')">
+        <div>
+          <div class="product-sku">OPS · 04 — 05</div>
+          <div class="product-name-card">The Agency OS Blueprint + Implementation Lab</div>
+          <div class="product-desc-card">The complete end-to-end path — from the full framework course and workbook through to hands-on coached implementation. The fastest route to a systemised agency.</div>
+          <div class="product-footer"><span class="product-price-card">$1,999.99</span><span class="product-list-card" style="font-size:16px">– $2,599.99</span></div>
+          <div class="product-format-card" style="margin-top:10px">Course + Coaching Programme</div>
+        </div>
+        <button class="btn btn-primary btn-sm" style="flex-shrink:0">View Programmes →</button>
+      </div>
+    </div>
+  </section>
+  <div class="cta-banner">
+    <div>
+      <div class="cta-banner-title">Ready to stop being the bottleneck?</div>
+      <div class="cta-banner-sub">Start with the Operational Audit — a full diagnostic across all five pillars for $49.99. Understand exactly where you are, and what to fix first.</div>
+    </div>
+    <div class="cta-banner-actions">
+      <button class="btn btn-primary" onclick="showPage('products')">Start with the Audit — $49.99</button>
+      <button class="btn btn-ghost" onclick="showPage('membership')">Join the Membership →</button>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-brand">
+      <div class="footer-logo">STRUCTURA</div>
+      <div class="footer-tagline">Installs the structure your business needs to scale beyond you.</div>
+      <div class="footer-domain">structurarch.com</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Products</div>
+      <div class="footer-link">Agency Operational Audit</div>
+      <div class="footer-link">Agency Systems Playbooks</div>
+      <div class="footer-link">Templates & Systems Kit</div>
+      <div class="footer-link">The Agency OS Blueprint</div>
+      <div class="footer-link">Implementation Lab</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <div class="footer-link" onclick="showPage('about')">About</div>
+      <div class="footer-link" onclick="showPage('blog')">Blog</div>
+      <div class="footer-link" onclick="showPage('membership')">Membership</div>
+      <div class="footer-link">Contact</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Connect</div>
+      <div class="footer-link">LinkedIn</div>
+      <div class="footer-link">info@structurarch.com</div>
+      <div class="footer-link">Newsletter</div>
+    </div>
+  </footer>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 Structura · structurarch.com</div>
+    <div class="footer-legal">
+      <span class="footer-legal-link">Privacy Policy</span>
+      <span class="footer-legal-link">Terms of Use</span>
+    </div>
+  </div>
+</div>
+<div class="page" id="page-products">
+  <div class="products-hero">
+    <span class="eyebrow">Product Suite</span>
+    <h1 class="section-title">Five ways to build your Agency OS</h1>
+    <p class="section-sub">From a quick diagnostic to full coached implementation — every product is built around the same five-pillar framework. Start anywhere. Build everything.</p>
+  </div>
+  <div class="products-page-grid">
+    <div class="product-page-card">
+      <div class="product-badge">OPS · 01 · PDF Assessment</div>
+      <div class="product-name-page">Agency Operational Audit</div>
+      <div class="product-desc-page">The fastest way to see exactly where your agency stands. A structured self-assessment across all five Structura pillars — with scoring, gap analysis, and a clear list of what to fix first. The right starting point for every founder.</div>
+      <div class="product-includes">
+        <div class="product-includes-label">What's included</div>
+        <div class="product-include-item"><div class="include-dot"></div>5-pillar diagnostic framework</div>
+        <div class="product-include-item"><div class="include-dot"></div>Scoring rubric across 25 dimensions</div>
+        <div class="product-include-item"><div class="include-dot"></div>Gap analysis + prioritised next steps</div>
+        <div class="product-include-item"><div class="include-dot"></div>Action prompts for each pillar</div>
+      </div>
+      <div class="product-price-row">
+        <div class="product-price-page">$49.99</div>
+        <div class="product-list-page">$75</div>
+        <div class="product-savings">Save $25</div>
+      </div>
+      <button class="btn btn-primary btn-sm">Buy Now →</button>
+    </div>
+    <div class="product-page-card">
+      <div class="product-badge">OPS · 02 · PDF + Templates</div>
+      <div class="product-name-page">Agency Systems Playbooks</div>
+      <div class="product-desc-page">The full Structura framework in playbook form. Frameworks, templates, and implementation guides for all five pillars — Revenue, Delivery, Performance, Ownership, and Communication. Built to be used, not just read.</div>
+      <div class="product-includes">
+        <div class="product-includes-label">What's included</div>
+        <div class="product-include-item"><div class="include-dot"></div>5 complete pillar playbooks</div>
+        <div class="product-include-item"><div class="include-dot"></div>Ready-to-use templates for each pillar</div>
+        <div class="product-include-item"><div class="include-dot"></div>Implementation checklists</div>
+        <div class="product-include-item"><div class="include-dot"></div>Process documentation guides</div>
+      </div>
+      <div class="product-price-row">
+        <div class="product-price-page">$199.99</div>
+        <div class="product-list-page">$250</div>
+        <div class="product-savings">Save $50</div>
+      </div>
+      <button class="btn btn-primary btn-sm">Buy Now →</button>
+    </div>
+    <div class="product-page-card">
+      <div class="product-badge">OPS · 03 · Template Bundle</div>
+      <div class="product-name-page">Agency OS Templates & Systems Kit</div>
+      <div class="product-desc-page">Every template, system, and framework in one complete bundle. Pre-built and ready to drop straight into your agency — this is the fastest path to having a fully documented operating system without building from scratch.</div>
+      <div class="product-includes">
+        <div class="product-includes-label">What's included</div>
+        <div class="product-include-item"><div class="include-dot"></div>Complete template library (all 5 pillars)</div>
+        <div class="product-include-item"><div class="include-dot"></div>Process maps and SOP templates</div>
+        <div class="product-include-item"><div class="include-dot"></div>Meeting and reporting frameworks</div>
+        <div class="product-include-item"><div class="include-dot"></div>Hiring and onboarding systems</div>
+      </div>
+      <div class="product-price-row">
+        <div class="product-price-page">$249.99</div>
+        <div class="product-list-page">$300</div>
+        <div class="product-savings">Save $50</div>
+      </div>
+      <button class="btn btn-primary btn-sm">Buy Now →</button>
+    </div>
+    <div class="product-page-card featured">
+      <div class="featured-inner">
+        <div>
+          <div class="product-badge" style="background:rgba(37,99,235,0.3); border-color:rgba(96,165,250,0.4);">OPS · 04 · Course + Workbook · Most Complete</div>
+          <div class="product-name-page">The Agency OS Blueprint</div>
+          <div class="product-desc-page">The complete Agency OS framework taught end-to-end. A full video course and workbook that walks you through every pillar — how to diagnose, design, and implement an operating system that removes you as the bottleneck. This is the transformation, not just the tools.</div>
+          <div class="product-price-row">
+            <div class="product-price-page">$1,999.99</div>
+            <div class="product-list-page">$2,500</div>
+            <div class="product-savings">Save $500</div>
+          </div>
+          <button class="btn btn-primary">Enrol Now →</button>
+        </div>
+        <div>
+          <div class="product-includes" style="margin-bottom:0">
+            <div class="product-includes-label">What's included</div>
+            <div class="product-include-item"><div class="include-dot"></div>Full 5-module video course</div>
+            <div class="product-include-item"><div class="include-dot"></div>Accompanying workbook</div>
+            <div class="product-include-item"><div class="include-dot"></div>All playbooks and templates</div>
+            <div class="product-include-item"><div class="include-dot"></div>Lifetime access + updates</div>
+            <div class="product-include-item"><div class="include-dot"></div>Community access (3 months)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="product-page-card" style="grid-column: span 2;">
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start;">
+        <div>
+          <div class="product-badge">OPS · 05 · Coaching Programme</div>
+          <div class="product-name-page">Agency OS Implementation Lab</div>
+          <div class="product-desc-page">The done-with-you path. You bring the agency — we install the operating system together. A structured coaching programme that works through every pillar with direct support, custom build sessions, and accountability checkpoints to make sure it actually gets implemented.</div>
+          <div class="product-price-row">
+            <div class="product-price-page">$2,599.99</div>
+            <div class="product-list-page">$3,000</div>
+            <div class="product-savings">Save $400</div>
+          </div>
+          <button class="btn btn-primary">Apply Now →</button>
+        </div>
+        <div>
+          <div class="product-includes" style="margin-bottom:0">
+            <div class="product-includes-label">What's included</div>
+            <div class="product-include-item"><div class="include-dot"></div>Full Agency OS Blueprint course</div>
+            <div class="product-include-item"><div class="include-dot"></div>Live implementation sessions</div>
+            <div class="product-include-item"><div class="include-dot"></div>Custom build for your agency</div>
+            <div class="product-include-item"><div class="include-dot"></div>Direct access + Q&A support</div>
+            <div class="product-include-item"><div class="include-dot"></div>Accountability check-ins</div>
+            <div class="product-include-item"><div class="include-dot"></div>6 months community access</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="height:64px"></div>
+  <footer>
+    <div class="footer-brand">
+      <div class="footer-logo">STRUCTURA</div>
+      <div class="footer-tagline">Installs the structure your business needs to scale beyond you.</div>
+      <div class="footer-domain">structurarch.com</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Products</div>
+      <div class="footer-link">Agency Operational Audit</div>
+      <div class="footer-link">Agency Systems Playbooks</div>
+      <div class="footer-link">Templates & Systems Kit</div>
+      <div class="footer-link">The Agency OS Blueprint</div>
+      <div class="footer-link">Implementation Lab</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <div class="footer-link" onclick="showPage('about')">About</div>
+      <div class="footer-link" onclick="showPage('blog')">Blog</div>
+      <div class="footer-link" onclick="showPage('membership')">Membership</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Connect</div>
+      <div class="footer-link">LinkedIn</div>
+      <div class="footer-link">info@structurarch.com</div>
+    </div>
+  </footer>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 Structura · structurarch.com</div>
+    <div class="footer-legal"><span class="footer-legal-link">Privacy</span><span class="footer-legal-link">Terms</span></div>
+  </div>
+</div>
+<div class="page" id="page-about">
+  <div class="about-hero">
+    <div>
+      <span class="eyebrow">About Structura</span>
+      <h1 class="about-title">Built for founders<br>who built <span>too well.</span></h1>
+      <p class="about-body">Structura exists because of a pattern. Agency founders build something remarkable — then they become the ceiling. Every decision, every client relationship, every operational detail routes through one person.</p>
+      <p class="about-body">The Agency OS framework was built to break that pattern. Five pillars. One system. A structured path from founder-dependent to genuinely scalable.</p>
+      <button class="btn btn-primary" onclick="showPage('products')" style="margin-top:16px">Explore the Framework →</button>
+    </div>
+    <div class="about-quote">
+      "The goal isn't to remove yourself from the business. It's to build a business that doesn't collapse without you."
+      <cite>— The Structura Framework</cite>
+    </div>
+  </div>
+  <div class="pillars-section">
+    <span class="eyebrow">The Framework</span>
+    <h2 class="section-title">Five pillars. One operating system.</h2>
+    <p class="section-sub">The Agency OS framework covers every dimension of an agency that needs to be systematised for the business to scale independently.</p>
+    <div class="pillars-grid">
+      <div class="pillar-card">
+        <div class="pillar-icon-lg">💰</div>
+        <div class="pillar-card-name">Revenue</div>
+        <div class="pillar-card-desc">Predictable pipeline, structured pricing, and a repeatable new business process that doesn't rely on the founder's relationships.</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon-lg">⚙️</div>
+        <div class="pillar-card-name">Delivery</div>
+        <div class="pillar-card-desc">Documented processes, clear handoffs, and scalable operations that deliver consistent quality without founder oversight.</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon-lg">📊</div>
+        <div class="pillar-card-name">Performance</div>
+        <div class="pillar-card-desc">The right metrics tracked at the right level — so performance is visible, accountability is clear, and decisions are data-driven.</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon-lg">🏛️</div>
+        <div class="pillar-card-name">Ownership</div>
+        <div class="pillar-card-desc">Defined roles, decision rights, and an org structure that gives your team the authority to act — and the clarity to act well.</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon-lg">💬</div>
+        <div class="pillar-card-name">Communication</div>
+        <div class="pillar-card-desc">Meeting rhythms, reporting structures, and communication protocols that keep teams aligned without requiring constant founder input.</div>
+      </div>
+    </div>
+  </div>
+  <div class="mission-section">
+    <span class="eyebrow">How We Work</span>
+    <h2 class="section-title">Our approach</h2>
+    <div class="mission-grid">
+      <div class="mission-card">
+        <div class="mission-card-title">What Structura is</div>
+        <ul class="mission-list">
+          <li>A practical, implementation-first framework for agency operations</li>
+          <li>Built on patterns from real agencies at the $500K–$5M revenue range</li>
+          <li>Designed for founders who learn by doing, not just reading</li>
+          <li>Honest about what's hard — and what's worth doing anyway</li>
+          <li>A system you build once and run forever</li>
+        </ul>
+      </div>
+      <div class="mission-card">
+        <div class="mission-card-title">What Structura isn't</div>
+        <ul class="mission-list">
+          <li>A one-size-fits-all playbook that ignores your context</li>
+          <li>Theoretical frameworks with no implementation path</li>
+          <li>A quick fix — building real structure takes real work</li>
+          <li>Another course with 40 modules you'll never finish</li>
+          <li>Advice from someone who's never run an agency</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="cta-banner" style="margin-bottom:0">
+    <div>
+      <div class="cta-banner-title">Start with the Audit.</div>
+      <div class="cta-banner-sub">The Operational Audit is the best first step — a 30-minute diagnostic that shows you exactly where your agency stands across all five pillars, for $49.99.</div>
+    </div>
+    <div class="cta-banner-actions">
+      <button class="btn btn-primary" onclick="showPage('products')">Get the Audit — $49.99</button>
+      <button class="btn btn-ghost" onclick="showPage('membership')">View Membership</button>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-brand">
+      <div class="footer-logo">STRUCTURA</div>
+      <div class="footer-tagline">Installs the structure your business needs to scale beyond you.</div>
+      <div class="footer-domain">structurarch.com</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Products</div>
+      <div class="footer-link" onclick="showPage('products')">View All Products</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <div class="footer-link" onclick="showPage('blog')">Blog</div>
+      <div class="footer-link" onclick="showPage('membership')">Membership</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Connect</div>
+      <div class="footer-link">LinkedIn</div>
+      <div class="footer-link">info@structurarch.com</div>
+    </div>
+  </footer>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 Structura · structurarch.com</div>
+    <div class="footer-legal"><span class="footer-legal-link">Privacy</span><span class="footer-legal-link">Terms</span></div>
+  </div>
+</div>
+<div class="page" id="page-blog">
+  <div class="blog-hero">
+    <span class="eyebrow">The Structura Blog</span>
+    <h1 class="section-title">Systems, scale, and the<br>agency founder's path.</h1>
+    <p class="section-sub">Practical thinking on agency operations, team structure, and building a business that works without you in every decision.</p>
+  </div>
+  <div class="blog-grid">
+    <div class="blog-featured">
+      <div class="blog-featured-tag">
+        <span class="pill-green">Operations</span>
+        March 13, 2026
+      </div>
+      <div class="blog-featured-title">Overcoming Founder Bottlenecks in Creative Agencies</div>
+      <div class="blog-featured-excerpt">Every high-growth agency hits a wall where the founder becomes the constraint. Not because they're doing anything wrong — but because the systems haven't scaled with the ambition. Here's what that looks like, why it happens, and the structural changes that break the pattern.</div>
+      <div class="blog-featured-meta">12 min read · Agency Operations</div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:24px">Read Article →</button>
+    </div>
+    <div class="blog-sidebar">
+      <div class="blog-card">
+        <div class="blog-card-tag">Process</div>
+        <div class="blog-card-title">Streamline Your Agency with the Agency OS Blueprint™</div>
+        <div class="blog-card-excerpt">A walkthrough of the full Agency OS framework and how to start applying it to your own operations immediately.</div>
+        <div class="blog-card-meta">March 13, 2026 · 8 min read</div>
+      </div>
+      <div class="blog-card">
+        <div class="blog-card-tag">Profit</div>
+        <div class="blog-card-title">Establishing Efficient Processes for Predictable Profit</div>
+        <div class="blog-card-excerpt">Why most agencies bleed margin not from bad pricing, but from process chaos — and the three systems that fix it.</div>
+        <div class="blog-card-meta">March 13, 2026 · 9 min read</div>
+      </div>
+    </div>
+  </div>
+  <div class="blog-bottom-grid">
+    <div class="blog-teaser">
+      <div class="blog-teaser-label">Coming Soon</div>
+      <div class="blog-teaser-title">Why Agencies Stall at $500K — And What the Data Actually Shows</div>
+      <div class="blog-teaser-cta">Notify me <span>→</span></div>
+    </div>
+    <div class="blog-teaser">
+      <div class="blog-teaser-label">Coming Soon</div>
+      <div class="blog-teaser-title">5 Signs You're the Bottleneck (And How to Systematically Remove Yourself)</div>
+      <div class="blog-teaser-cta">Notify me <span>→</span></div>
+    </div>
+    <div class="blog-teaser" style="background:var(--bg3); display:flex; flex-direction:column; justify-content:center; align-items:flex-start; gap:12px;">
+      <div class="blog-teaser-label">Newsletter</div>
+      <div class="blog-teaser-title" style="font-size:15px; color:var(--muted2)">Get new articles and frameworks direct to your inbox.</div>
+      <button class="btn btn-primary btn-sm" style="margin-top:8px">Subscribe Free →</button>
+    </div>
+  </div>
+  <div style="height: 64px;"></div>
+  <footer>
+    <div class="footer-brand">
+      <div class="footer-logo">STRUCTURA</div>
+      <div class="footer-tagline">Installs the structure your business needs to scale beyond you.</div>
+      <div class="footer-domain">structurarch.com</div>
+    </div>
+    <div><div class="footer-col-title">Products</div><div class="footer-link" onclick="showPage('products')">View All Products</div></div>
+    <div><div class="footer-col-title">Company</div><div class="footer-link" onclick="showPage('about')">About</div><div class="footer-link" onclick="showPage('membership')">Membership</div></div>
+    <div><div class="footer-col-title">Connect</div><div class="footer-link">LinkedIn</div><div class="footer-link">info@structurarch.com</div></div>
+  </footer>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 Structura · structurarch.com</div>
+    <div class="footer-legal"><span class="footer-legal-link">Privacy</span><span class="footer-legal-link">Terms</span></div>
+  </div>
+</div>
+<div class="page" id="page-membership">
+  <div class="membership-hero">
+    <span class="eyebrow" style="display:block; margin-bottom:20px;">Structura Membership</span>
+    <h1 class="membership-title">Stay sharp.<br>Stay <span>accountable.</span></h1>
+    <p class="membership-sub">Ongoing community access, monthly calls, and new templates and frameworks as the system evolves. The place to implement, get unstuck, and keep building.</p>
+    <button class="btn btn-primary" style="position:relative">Join the Community →</button>
+  </div>
+  <div class="plans-grid">
+    <div class="plan-card">
+      <div class="plan-name">Starter</div>
+      <div class="plan-price">Free<span></span></div>
+      <div class="plan-desc">Community access and the foundational frameworks to get started.</div>
+      <ul class="plan-features">
+        <li class="plan-feature">Community forum access</li>
+        <li class="plan-feature">Free Operational Audit intro</li>
+        <li class="plan-feature">Weekly newsletter</li>
+        <li class="plan-feature na">Monthly group call</li>
+        <li class="plan-feature na">New templates monthly</li>
+        <li class="plan-feature na">Direct Q&A access</li>
+      </ul>
+      <button class="btn btn-ghost" style="width:100%; justify-content:center;">Join Free</button>
+    </div>
+    <div class="plan-card featured">
+      <div class="plan-featured-badge">Most Popular</div>
+      <div class="plan-name">Membership</div>
+      <div class="plan-price">$49<span>/mo</span></div>
+      <div class="plan-desc">Full community access, monthly calls, and a growing library of templates and frameworks.</div>
+      <ul class="plan-features">
+        <li class="plan-feature">Everything in Starter</li>
+        <li class="plan-feature">Monthly group implementation call</li>
+        <li class="plan-feature">New templates every month</li>
+        <li class="plan-feature">Framework deep-dives</li>
+        <li class="plan-feature">Member Q&A and peer support</li>
+        <li class="plan-feature na">1:1 implementation support</li>
+      </ul>
+      <button class="btn btn-primary" style="width:100%; justify-content:center;">Join for $49/mo</button>
+    </div>
+    <div class="plan-card">
+      <div class="plan-name">Implementation Lab</div>
+      <div class="plan-price">$2,599<span> one-time</span></div>
+      <div class="plan-desc">The full done-with-you programme. Direct support, custom build sessions, and 6 months membership included.</div>
+      <ul class="plan-features">
+        <li class="plan-feature">Everything in Membership</li>
+        <li class="plan-feature">Full Agency OS Blueprint course</li>
+        <li class="plan-feature">Live implementation sessions</li>
+        <li class="plan-feature">Custom build for your agency</li>
+        <li class="plan-feature">Accountability check-ins</li>
+        <li class="plan-feature">6 months membership included</li>
+      </ul>
+      <button class="btn btn-ghost" style="width:100%; justify-content:center;" onclick="showPage('products')">View Programme →</button>
+    </div>
+  </div>
+  <div class="membership-perks">
+    <div class="perk-card">
+      <div class="perk-icon">📅</div>
+      <div class="perk-title">Monthly Group Calls</div>
+      <div class="perk-desc">Live implementation sessions with the full community. Bring your real questions, get real answers.</div>
+    </div>
+    <div class="perk-card">
+      <div class="perk-icon">📦</div>
+      <div class="perk-title">New Templates Monthly</div>
+      <div class="perk-desc">Fresh frameworks and templates added every month as the Agency OS system continues to evolve.</div>
+    </div>
+    <div class="perk-card">
+      <div class="perk-icon">🤝</div>
+      <div class="perk-title">Peer Community</div>
+      <div class="perk-desc">A community of agency founders working through the same challenges. Ask questions, share wins, stay accountable.</div>
+    </div>
+    <div class="perk-card">
+      <div class="perk-icon">🔒</div>
+      <div class="perk-title">Cancel Anytime</div>
+      <div class="perk-desc">No lock-in. Month-to-month. If it's not delivering value, cancel with one click — no questions asked.</div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-brand">
+      <div class="footer-logo">STRUCTURA</div>
+      <div class="footer-tagline">Installs the structure your business needs to scale beyond you.</div>
+      <div class="footer-domain">structurarch.com</div>
+    </div>
+    <div><div class="footer-col-title">Products</div><div class="footer-link" onclick="showPage('products')">View All Products</div></div>
+    <div><div class="footer-col-title">Company</div><div class="footer-link" onclick="showPage('about')">About</div><div class="footer-link" onclick="showPage('blog')">Blog</div></div>
+    <div><div class="footer-col-title">Connect</div><div class="footer-link">LinkedIn</div><div class="footer-link">info@structurarch.com</div></div>
+  </footer>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 Structura · structurarch.com</div>
+    <div class="footer-legal"><span class="footer-legal-link">Privacy</span><span class="footer-legal-link">Terms</span></div>
+  </div>
+</div>
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const link = document.querySelector(`.nav-link[onclick*="'${id}'"]`);
+  if (link) link.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
